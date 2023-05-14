@@ -5,17 +5,42 @@
  */
 package mx.itson.bolita.empleado.proveedores;
 
+import java.util.List;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+import mx.itson.bolita.basedatos.Conexion;
+import mx.itson.bolita.dao.ArticuloDAO;
+import mx.itson.bolita.entidades.Articulos;
+
 /**
  *
  * @author Alexis Bejarano
  */
 public class ListaProveedores extends javax.swing.JFrame {
 
+    DefaultTableModel _modelo = new DefaultTableModel();
     /**
      * Creates new form ListaProveedores
      */
     public ListaProveedores() {
         initComponents();
+        
+        Conexion bd = new Conexion();
+        ArticuloDAO _articuloDAO = new ArticuloDAO(bd.getConnection());
+        List<Articulos> _listaArticulos = (List<Articulos>)_articuloDAO.buscarTodo();
+        _modelo = (DefaultTableModel) tblArticulos.getModel();
+        
+        for (Articulos _articulos: _listaArticulos){
+        
+            _modelo.addRow(new String[]{
+                String.valueOf(_articulos.getId()), 
+                String.valueOf(_articulos.getNombre()),
+                String.valueOf(_articulos.getPrecio()),
+                String.valueOf(_articulos.getModelo())
+            });
+        }
+        
+        tblArticulos.setModel(_modelo);
     }
 
     /**
@@ -29,7 +54,7 @@ public class ListaProveedores extends javax.swing.JFrame {
 
         jLabel1 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        tblArticulos = new javax.swing.JTable();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
@@ -46,7 +71,7 @@ public class ListaProveedores extends javax.swing.JFrame {
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
         jLabel1.setText("Proveedores Registrados");
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tblArticulos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null},
                 {null, null},
@@ -57,9 +82,14 @@ public class ListaProveedores extends javax.swing.JFrame {
                 "Nombre", "Marcas"
             }
         ));
-        jScrollPane1.setViewportView(jTable1);
+        jScrollPane1.setViewportView(tblArticulos);
 
         jButton1.setText("Eliminar");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         jButton2.setText("Editar");
 
@@ -166,6 +196,44 @@ public class ListaProveedores extends javax.swing.JFrame {
         this.setVisible(false);
     }//GEN-LAST:event_jButton3ActionPerformed
 
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        int renglon = tblArticulos.getSelectedRow();
+        
+        if(renglon >= 0){
+            int confirmar= JOptionPane.showConfirmDialog(this,"Eliminar","Estas seguro",JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+            if(confirmar == 0){
+            Conexion bd = new Conexion();
+            ArticuloDAO articuloDAO = new ArticuloDAO(bd.getConnection());
+            articuloDAO.eliminar(0);
+            this.actualizar();
+            }}else{
+            //javax.swing.JOptionPane.showMessageDialog(this, "Eliminar", "Favor de seleccionar", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+        }
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+     public void actualizar(){
+
+        Conexion bd = new Conexion();
+        
+        ArticuloDAO _clienteDAOImplement = new ArticuloDAO(bd.getConnection());
+        
+        List<Articulos> _listaArticulos = (List<Articulos>)_clienteDAOImplement.buscarTodo();
+        tblArticulos.setModel(new DefaultTableModel());
+        _modelo = (DefaultTableModel) tblArticulos.getModel();
+        
+        for (Articulos articulos: _listaArticulos){
+        
+            _modelo.addRow(new String[]{
+                String.valueOf(articulos.getId()), 
+                String.valueOf(articulos.getNombre()),
+                String.valueOf(articulos.getPrecio()),
+                String.valueOf(articulos.getModelo()),
+            });
+        }
+        
+        tblArticulos.setModel(_modelo);
+}
+     
     /**
      * @param args the command line arguments
      */
@@ -213,7 +281,7 @@ public class ListaProveedores extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
     private javax.swing.JTextField jTextField1;
+    private javax.swing.JTable tblArticulos;
     // End of variables declaration//GEN-END:variables
 }
