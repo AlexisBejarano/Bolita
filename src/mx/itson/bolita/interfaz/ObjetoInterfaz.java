@@ -11,6 +11,7 @@ package mx.itson.bolita.interfaz;
  */
 public interface ObjetoInterfaz {
     
+    boolean agregar(Object _object);
     boolean eliminar(int _object);
     boolean modificar(Object _object);
     Object buscarPor(int _dato);

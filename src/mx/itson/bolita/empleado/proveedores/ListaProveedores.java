@@ -204,7 +204,7 @@ public class ListaProveedores extends javax.swing.JFrame {
             if(confirmar == 0){
             Conexion bd = new Conexion();
             ArticuloDAO articuloDAO = new ArticuloDAO(bd.getConnection());
-            articuloDAO.eliminar(0);
+            articuloDAO.eliminar(renglon);
             this.actualizar();
             }}else{
             //javax.swing.JOptionPane.showMessageDialog(this, "Eliminar", "Favor de seleccionar", javax.swing.JOptionPane.INFORMATION_MESSAGE);

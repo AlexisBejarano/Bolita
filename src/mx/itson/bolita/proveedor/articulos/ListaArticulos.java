@@ -5,7 +5,13 @@
  */
 package mx.itson.bolita.proveedor.articulos;
 
-import mx.itson.bolita.empleado.articulos.*;
+import java.util.List;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+import mx.itson.bolita.basedatos.Conexion;
+import mx.itson.bolita.dao.ArticuloDAO;
+//import mx.itson.bolita.empleado.articulos.*;
+import mx.itson.bolita.entidades.Articulos;
 
 /**
  *
@@ -13,11 +19,27 @@ import mx.itson.bolita.empleado.articulos.*;
  */
 public class ListaArticulos extends javax.swing.JFrame {
 
+    DefaultTableModel _modelo = new DefaultTableModel();
+    
     /**
      * Creates new form ListaArticulos
      */
     public ListaArticulos() {
         initComponents();
+        Conexion bd = new Conexion();
+        ArticuloDAO _articuloDAO = new ArticuloDAO(bd.getConnection());
+        List<Articulos> _listaArticulos = (List<Articulos>)_articuloDAO.buscarTodo();
+        _modelo = (DefaultTableModel) tblArticulos.getModel();
+        
+        for (Articulos _articulos: _listaArticulos){
+        
+            _modelo.addRow(new String[]{
+                String.valueOf(_articulos.getNombre()),
+                String.valueOf(_articulos.getPrecio()),
+            });
+        }
+        
+        tblArticulos.setModel(_modelo);
     }
 
     /**
@@ -38,11 +60,16 @@ public class ListaArticulos extends javax.swing.JFrame {
         jLabel5 = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        tblArticulos = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jButton1.setText("Eliminar");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         jButton2.setText("Editar");
 
@@ -62,7 +89,7 @@ public class ListaArticulos extends javax.swing.JFrame {
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
         jLabel1.setText("Articulos Registrados");
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tblArticulos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null},
                 {null, null},
@@ -73,7 +100,7 @@ public class ListaArticulos extends javax.swing.JFrame {
                 "Nombre", "Marcas"
             }
         ));
-        jScrollPane1.setViewportView(jTable1);
+        jScrollPane1.setViewportView(tblArticulos);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -97,20 +124,18 @@ public class ListaArticulos extends javax.swing.JFrame {
                         .addGap(206, 206, 206)
                         .addComponent(jButton3)))
                 .addContainerGap(31, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                    .addContainerGap(76, Short.MAX_VALUE)
-                    .addComponent(jLabel4)
-                    .addGap(147, 147, 147))
-                .addGroup(layout.createSequentialGroup()
-                    .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                            .addComponent(jLabel1)
-                            .addGap(121, 121, 121))
-                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                            .addComponent(jLabel2)
-                            .addGap(202, 202, 202)))))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(jLabel4)
+                        .addGap(147, 147, 147))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addGap(121, 121, 121))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(jLabel2)
+                        .addGap(202, 202, 202))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -145,6 +170,42 @@ public class ListaArticulos extends javax.swing.JFrame {
         this.setVisible(false);
     }//GEN-LAST:event_jButton3ActionPerformed
 
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        int renglon = tblArticulos.getSelectedRow();
+        
+        if(renglon >= 0){
+            int confirmar= JOptionPane.showConfirmDialog(this,"Eliminar","Estas seguro",JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+            if(confirmar == 0){
+            Conexion bd = new Conexion();
+            ArticuloDAO articuloDAO = new ArticuloDAO(bd.getConnection());
+            articuloDAO.eliminar(renglon);
+            this.actualizar();
+            }}else{
+            //javax.swing.JOptionPane.showMessageDialog(this, "Eliminar", "Favor de seleccionar", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+        }
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+        public void actualizar(){
+
+        Conexion bd = new Conexion();
+        
+        ArticuloDAO articuloDAO = new ArticuloDAO(bd.getConnection());
+        
+        List<Articulos> _listaArticulos = (List<Articulos>)articuloDAO.buscarTodo();
+        tblArticulos.setModel(new DefaultTableModel());
+        _modelo = (DefaultTableModel) tblArticulos.getModel();
+        
+        for (Articulos articulos: _listaArticulos){
+        
+            _modelo.addRow(new String[]{ 
+                String.valueOf(articulos.getNombre()),
+                String.valueOf(articulos.getPrecio()),
+            });
+        }
+        
+        tblArticulos.setModel(_modelo);
+}
+        
     /**
      * @param args the command line arguments
      */
@@ -190,7 +251,7 @@ public class ListaArticulos extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
     private javax.swing.JTextField jTextField1;
+    private javax.swing.JTable tblArticulos;
     // End of variables declaration//GEN-END:variables
 }

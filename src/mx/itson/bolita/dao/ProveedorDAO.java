@@ -30,7 +30,7 @@ public class ProveedorDAO implements ObjetoInterfaz {
     
      public boolean modificar(Object _object) {
         
-        Proveedor _cliente = (Proveedor) _object;
+        Proveedor proveedor = (Proveedor) _object;
         
         boolean _respuesta = false;
         
@@ -47,9 +47,9 @@ public class ProveedorDAO implements ObjetoInterfaz {
         try {
             _statement = this._connection.prepareStatement(_sql.toString());
         
-             _statement.setInt(1, _cliente.getId());
-            _statement.setString(2, _cliente.getNombre());
-            _statement.setObject(3, _cliente.getArticulos());
+             _statement.setInt(1, proveedor.getId());
+            _statement.setString(2, proveedor.getNombre());
+            _statement.setObject(3, proveedor.getArticulos());
            
             
             _respuesta = _statement.execute();
@@ -63,7 +63,7 @@ public class ProveedorDAO implements ObjetoInterfaz {
 
     public Object buscarPor(String _campo, String _dato) {
         
-        List<Proveedor> _listaClientes = new ArrayList<Proveedor>();
+        List<Proveedor> _listaProveedor = new ArrayList<Proveedor>();
                 
         StringBuilder _sql = new StringBuilder();
         
@@ -84,13 +84,13 @@ public class ProveedorDAO implements ObjetoInterfaz {
             
             while (_respuesta.next()){
                 
-                Proveedor _cliente = new Proveedor();
+                Proveedor proveedor = new Proveedor();
                 
-                _cliente.setId(_respuesta.getInt("id"));
-                _cliente.setNombre(_respuesta.getString("nombre"));
+                proveedor.setId(_respuesta.getInt("id"));
+                proveedor.setNombre(_respuesta.getString("nombre"));
 //                _cliente.setArticulos(_respuesta.getString("idarticulo"));
                 
-                _listaClientes.add(_cliente);
+                _listaProveedor.add(proveedor);
                 
             }
             
@@ -98,7 +98,7 @@ public class ProveedorDAO implements ObjetoInterfaz {
             System.out.println("miTienda: Ha ocurrido un error al momento de buscar el cliente en la base de datos, error: " + ex.getMessage());
         }
         
-        return _listaClientes;
+        return _listaProveedor;
         
     }
 
@@ -130,7 +130,7 @@ public class ProveedorDAO implements ObjetoInterfaz {
 
     @Override
     public Object buscarPor(int _dato) {
-         List<Proveedor> _listaClientes = new ArrayList<Proveedor>();
+         List<Proveedor> _listaProveedores = new ArrayList<Proveedor>();
                 
         StringBuilder _sql = new StringBuilder();
         
@@ -151,27 +151,27 @@ public class ProveedorDAO implements ObjetoInterfaz {
             
             while (_respuesta.next()){
                 
-                Proveedor _cliente = new Proveedor();
+                Proveedor proveedor = new Proveedor();
                 
-                _cliente.setId(_respuesta.getInt("id"));
-                _cliente.setNombre(_respuesta.getString("nombre"));
+                proveedor.setId(_respuesta.getInt("id"));
+                proveedor.setNombre(_respuesta.getString("nombre"));
 //                _cliente.setArticulos(_respuesta.getObject("idarticulo"));
                 
-                _listaClientes.add(_cliente);
+                _listaProveedores.add(proveedor);
                 
             }
             
         } catch (SQLException ex) {
-            System.out.println("miTienda: Ha ocurrido un error al momento de buscar el cliente en la base de datos, error: " + ex.getMessage());
+            System.out.println("Bolita: Ha ocurrido un error al momento de buscar el cliente en la base de datos, error: " + ex.getMessage());
         }
         
-        return _listaClientes;
+        return _listaProveedores;
         
     }
 
     @Override
     public Object buscarTodo() {
-       List<Proveedor> _listaClientes = new ArrayList<Proveedor>();
+       List<Proveedor> _listaProveedores = new ArrayList<Proveedor>();
          
         StringBuilder _sql = new StringBuilder();
         
@@ -190,13 +190,13 @@ public class ProveedorDAO implements ObjetoInterfaz {
             
             while (_respuesta.next()){
                 
-                Proveedor _cliente = new Proveedor();
+                Proveedor proveedor = new Proveedor();
                 
-                _cliente.setId(_respuesta.getInt("id"));
-                _cliente.setNombre(_respuesta.getString("nombre"));
+                proveedor.setId(_respuesta.getInt("id"));
+                proveedor.setNombre(_respuesta.getString("nombre"));
                // _cliente.setArticulos(_respuesta.getString("idarticulos"));
                 
-                _listaClientes.add(_cliente);
+                _listaProveedores.add(proveedor);
                 
             }
             
@@ -204,6 +204,34 @@ public class ProveedorDAO implements ObjetoInterfaz {
             System.out.println("miTienda: Ha ocurrido un error al momento de buscar el cliente en la base de datos, error: " + ex.getMessage());
         }
         
-        return _listaClientes;
+        return _listaProveedores;
+    }
+
+    @Override
+    public boolean agregar(Object _object) {
+        Proveedor proveedor = (Proveedor) _object;
+        
+        boolean _respuesta = false;
+        
+        StringBuilder _sql = new StringBuilder();
+        
+        _sql.append("INSERT INTO foco.proveedor ")
+                .append("(nombre, idarticulo )")
+                .append("VALUES (?, ?); ");
+        
+        PreparedStatement _statement;
+        try {
+            _statement = this._connection.prepareStatement(_sql.toString());
+        
+            _statement.setString(1, proveedor.getNombre());
+            _statement.setObject(2, proveedor.getArticulos());
+            
+            _respuesta = _statement.execute();
+            
+        } catch (SQLException ex) {
+            System.out.println("bolita: Ha ocurrido un error al momento de agregar el cliente a la base de datos, error: " + ex.getMessage());
+        }
+        
+        return _respuesta;
     }
 }

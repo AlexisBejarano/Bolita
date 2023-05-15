@@ -83,7 +83,7 @@ public class ArticuloDAO implements ObjetoInterfaz{
                 
                 Articulos _cliente = new Articulos();
                 
-                //_cliente.setId(_respuesta.getInt("idmodelo"));
+                _cliente.setId(_respuesta.getInt("idmodelo"));
                 _cliente.setNombre(_respuesta.getString("nombre"));
                 _cliente.setPrecio(_respuesta.getDouble("precio"));
                // _cliente.setModelo(_respuesta.getObject("idmodelo"));
@@ -97,5 +97,10 @@ public class ArticuloDAO implements ObjetoInterfaz{
         }
         
         return _listaArticulos;
+    }
+
+    @Override
+    public boolean agregar(Object _object) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }
